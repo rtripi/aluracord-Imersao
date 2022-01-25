@@ -1,36 +1,7 @@
 import appConfig from '../config.json';
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
-
-const GlobalStyle = () => {
-  return (
-    <style jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: 'Open Sans', sans-serif;
-      }
-      /* App fit Height */
-      html,
-      body,
-      #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */
-    `}</style>
-  );
-};
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 const Title = ({ text, tag }) => {
   const Tag = tag || 'h1';
@@ -61,11 +32,11 @@ const Title = ({ text, tag }) => {
 //export default HomePage;
 
 export default function PaginaInicial() {
-  const username = 'rtripi';
+  const [username, setUsername] = useState('rtripi');
+  const roteamento = useRouter();
 
   return (
     <>
-      <GlobalStyle />
       <Box
         styleSheet={{
           display: 'flex',
@@ -102,6 +73,10 @@ export default function PaginaInicial() {
           {/* Formulário */}
           <Box
             as="form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              roteamento.push('/chat');
+            }}
             styleSheet={{
               display: 'flex',
               flexDirection: 'column',
@@ -122,8 +97,20 @@ export default function PaginaInicial() {
             >
               {appConfig.name}
             </Text>
-
+            {/* <input
+              type="text"
+              value={username}
+              onChange={function Handler(event) {
+                const valor = event.target.value;
+                setUsername(valor);
+              }}
+            /> */}
             <TextField
+              value={username}
+              onChange={function Handler(event) {
+                const valor = event.target.value;
+                setUsername(valor);
+              }}
               fullWidth
               textFieldColors={{
                 neutral: {
@@ -145,7 +132,7 @@ export default function PaginaInicial() {
                 mainColorStrong: appConfig.theme.colors.primary[600],
               }}
               styleSheet={{
-                width: '50%',
+                width: '70%',
                 marginTop: '15px',
               }}
             />
