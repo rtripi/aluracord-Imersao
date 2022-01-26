@@ -83,11 +83,6 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={(event) => {
               event.preventDefault();
-              // if (event.target[0].value.length > 2) {
-              //   setUserValido(false);
-              // } else {
-              //   setUserValido(true);
-              // }
 
               const usernameString = username.toString();
 
