@@ -74,6 +74,7 @@ export default function ChatPage() {
             styleSheet={{
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'center',
               position: 'relative',
             }}
           >
@@ -92,19 +93,39 @@ export default function ChatPage() {
               placeholder="Insira sua mensagem aqui..."
               type="textarea"
               styleSheet={{
-                width: '100%',
+                width: '90%',
                 border: '0',
                 resize: 'none',
                 borderRadius: '5px',
                 padding: '6px 8px',
                 backgroundColor: appConfig.theme.colors.neutrals[800],
-                marginRight: '12px',
+                //marginRight: '12px',
                 marginTop: '10px',
                 color: appConfig.theme.colors.neutrals[200],
                 // position: 'absolute',
                 // top: '350px',
                 // right: '50%',
                 // transform: 'translateX(50%)',
+              }}
+            />
+            <Button
+              label="ENVIAR"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNovaMensagem(mensagem);
+              }}
+              styleSheet={{
+                width: '5%',
+                height: '44px',
+                border: '0',
+                resize: 'none',
+                borderRadius: '5px',
+                padding: '6px 8px',
+                backgroundColor: appConfig.theme.colors.neutrals[800],
+                marginRight: '12px',
+                marginLeft: '15px',
+                marginTop: '2px',
+                color: '#FFFFFF50',
               }}
             />
           </Box>
@@ -154,7 +175,6 @@ function MessageList(props) {
       }}
     >
       {props.mensagens.map((mensagem) => {
-        console.log(mensagem);
         return (
           <Text
             key={mensagem.id}
