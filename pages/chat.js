@@ -18,10 +18,12 @@ export default function ChatPage() {
   };
 
   const handleDelete = (e) => {
-    const msgId = Number(e.target.dataset.id);
+    const msgId = Number(e.currentTarget.dataset.id);
     const filteredItems = chat.filter((item) => {
-      item.id !== msgId;
+      //console.log(`ITEM ID - ${item.id} /// msgID - ${msgId}`);
+      return item.id !== msgId;
     });
+
     setChat(filteredItems);
   };
   // ./Sua lógica vai aqui
