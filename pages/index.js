@@ -1,6 +1,6 @@
 import appConfig from '../config.json';
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 const Title = ({ text, tag }) => {
@@ -32,8 +32,16 @@ const Title = ({ text, tag }) => {
 //export default HomePage;
 
 export default function PaginaInicial() {
-  const [username, setUsername] = useState('rtripi');
+  const [username, setUsername] = useState('');
+  const [userGitInfo, setUserGitInfo] = useState('');
   const roteamento = useRouter();
+
+  useEffect(() => {
+    fetch(`https://api.github.com/users/${username}`)
+      .then((r) => r.json())
+      .then((result) => setUserGitInfo(result));
+    console.log(userGitInfo);
+  }, [username]);
 
   return (
     <>
@@ -75,7 +83,21 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={(event) => {
               event.preventDefault();
-              roteamento.push('/chat');
+              // if (event.target[0].value.length > 2) {
+              //   setUserValido(false);
+              // } else {
+              //   setUserValido(true);
+              // }
+
+              const usernameString = username.toString();
+
+              if (usernameString.length < 3) {
+                setUsername('');
+                event.target[0].placeholder = 'digite mais do que 2 caracteres';
+              } else {
+                roteamento.push('/chat');
+                console.log(usernameString.length + ' entrou');
+              }
             }}
             styleSheet={{
               display: 'flex',
@@ -108,7 +130,7 @@ export default function PaginaInicial() {
             <TextField
               value={username}
               onChange={function Handler(event) {
-                const valor = event.target.value;
+                let valor = event.target.value;
                 setUsername(valor);
               }}
               fullWidth
@@ -140,40 +162,69 @@ export default function PaginaInicial() {
           {/* Formulário */}
 
           {/* Photo Area */}
-          <Box
-            styleSheet={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              maxWidth: '200px',
-              padding: '16px',
-              backgroundColor: appConfig.theme.colors.neutrals[800],
-              border: '1px solid',
-              borderColor: appConfig.theme.colors.neutrals[999],
-              borderRadius: '10px',
-              flex: 1,
-              minHeight: '240px',
-            }}
-          >
-            <Image
+          {username.length > 2 && (
+            <Box
               styleSheet={{
-                borderRadius: '50%',
-                marginBottom: '16px',
-              }}
-              src={`https://github.com/${username}.png`}
-            />
-            <Text
-              variant="body4"
-              styleSheet={{
-                color: appConfig.theme.colors.neutrals[200],
-                backgroundColor: appConfig.theme.colors.neutrals[900],
-                padding: '3px 10px',
-                borderRadius: '1000px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                maxWidth: '200px',
+                padding: '16px',
+                backgroundColor: appConfig.theme.colors.neutrals[800],
+                border: '1px solid',
+                borderColor: appConfig.theme.colors.neutrals[999],
+                borderRadius: '10px',
+                flex: 1,
+                minHeight: '240px',
               }}
             >
-              {username}
-            </Text>
-          </Box>
+              <Image
+                styleSheet={{
+                  borderRadius: '50%',
+                  marginBottom: '16px',
+                }}
+                src={`https://github.com/${username}.png`}
+              />
+              <Text
+                variant="body4"
+                styleSheet={{
+                  color: appConfig.theme.colors.neutrals[200],
+                  backgroundColor: appConfig.theme.colors.neutrals[900],
+                  padding: '3px 10px',
+                  borderRadius: '1000px',
+                }}
+              >
+                {username}
+              </Text>
+              <Text
+                variant="body4"
+                styleSheet={{
+                  color: appConfig.theme.colors.neutrals[200],
+                  backgroundColor: appConfig.theme.colors.neutrals[900],
+                  padding: '3px 10px',
+                  borderRadius: '1000px',
+                  marginTop: '5px',
+                  marginBottom: '5px',
+                }}
+              >
+                {userGitInfo.location}
+              </Text>
+              <Text
+                tag="a"
+                variant="body4"
+                styleSheet={{
+                  color: appConfig.theme.colors.neutrals[200],
+                  backgroundColor: appConfig.theme.colors.neutrals[900],
+                  padding: '3px 10px',
+                  borderRadius: '1000px',
+                }}
+                href={userGitInfo.html_url}
+              >
+                Go to Git
+              </Text>
+            </Box>
+          )}
+
           {/* Photo Area */}
         </Box>
       </Box>
