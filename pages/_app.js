@@ -12,6 +12,7 @@ const GlobalStyle = () => {
       }
       body {
         font-family: 'Open Sans', sans-serif;
+        height: 100vh;
       }
       /* App fit Height */
       html,

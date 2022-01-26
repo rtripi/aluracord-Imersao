@@ -16,6 +16,14 @@ export default function ChatPage() {
     setChat([mensagem, ...chat]);
     setMensagem('');
   };
+
+  const handleDelete = (e) => {
+    const msgId = Number(e.target.dataset.id);
+    const filteredItems = chat.filter((item) => {
+      item.id !== msgId;
+    });
+    setChat(filteredItems);
+  };
   // ./Sua lógica vai aqui
   return (
     <Box
@@ -60,15 +68,8 @@ export default function ChatPage() {
             padding: '16px',
           }}
         >
-          <MessageList mensagens={chat} />
+          <MessageList mensagens={chat} handleDelete={handleDelete} />
 
-          {/* {chat.map((texto) => {
-            return (
-              <li key={texto.id}>
-                {texto.from}: {texto.message}
-              </li>
-            );
-          })} */}
           <Box
             as="form"
             styleSheet={{
@@ -93,23 +94,18 @@ export default function ChatPage() {
               placeholder="Insira sua mensagem aqui..."
               type="textarea"
               styleSheet={{
-                width: '90%',
+                width: '95%',
                 border: '0',
                 resize: 'none',
                 borderRadius: '5px',
                 padding: '6px 8px',
                 backgroundColor: appConfig.theme.colors.neutrals[800],
-                //marginRight: '12px',
                 marginTop: '10px',
                 color: appConfig.theme.colors.neutrals[200],
-                // position: 'absolute',
-                // top: '350px',
-                // right: '50%',
-                // transform: 'translateX(50%)',
               }}
             />
             <Button
-              label="ENVIAR"
+              label="/\"
               onClick={(e) => {
                 e.preventDefault();
                 handleNovaMensagem(mensagem);
@@ -159,8 +155,7 @@ function Header() {
   );
 }
 
-function MessageList(props) {
-  console.log(props);
+function MessageList({ mensagens, handleDelete }) {
   return (
     <Box
       tag="ul"
@@ -174,7 +169,7 @@ function MessageList(props) {
         marginBottom: '16px',
       }}
     >
-      {props.mensagens.map((mensagem) => {
+      {mensagens.map((mensagem) => {
         return (
           <Text
             key={mensagem.id}
@@ -191,6 +186,8 @@ function MessageList(props) {
             <Box
               styleSheet={{
                 marginBottom: '8px',
+                display: 'flex',
+                alignItems: 'center',
               }}
             >
               <Image
@@ -214,6 +211,23 @@ function MessageList(props) {
               >
                 {new Date().toLocaleDateString()}
               </Text>
+              <Button
+                label="X"
+                onClick={handleDelete}
+                data-id={mensagem.id}
+                styleSheet={{
+                  width: '5px',
+                  heigth: '5px',
+                  backgroundColor: 'transparent',
+                  left: {
+                    xs: '5%',
+                    md: '55%',
+                    sm: '5%',
+                    lg: '60%',
+                    xl: '80%',
+                  },
+                }}
+              />
             </Box>
             {mensagem.message}
           </Text>
