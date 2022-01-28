@@ -90,8 +90,7 @@ export default function PaginaInicial() {
                 setUsername('');
                 event.target[0].placeholder = 'digite mais do que 2 caracteres';
               } else {
-                roteamento.push('/chat');
-                console.log(usernameString.length + ' entrou');
+                roteamento.push(`/chat?username=${username}`);
               }
             }}
             styleSheet={{
