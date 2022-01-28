@@ -1,19 +1,44 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMwMjE3NSwiZXhwIjoxOTU4ODc4MTc1fQ.Rcm8BdSvDJxH-qYlGMUWK9abX9OPx0QRLLLPHzZ9zTE';
+
+const SUPABASE_URL = 'https://sxukmdopdhgbbjgtvmjm.supabase.co';
+
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ChatPage() {
   // Sua lógica vai aqui
   const [mensagem, setMensagem] = useState('');
   const [chat, setChat] = useState([]);
 
+  useEffect(() => {
+    supabaseClient
+      .from('mensagens')
+      .select('*')
+      .order('id', { ascending: false })
+      .then(({ data }) => {
+        setChat(data);
+      });
+  }, []);
+
   const handleNovaMensagem = (novaMensagem) => {
     const mensagem = {
+      // id: chat.length + 1,
       message: novaMensagem,
       from: 'Renato Tripi',
-      id: chat.length + 1,
     };
-    setChat([mensagem, ...chat]);
+
+    supabaseClient
+      .from('mensagens')
+      .insert([mensagem])
+      .then(({ data }) => {
+        setChat([data[0], ...chat]);
+      });
+
     setMensagem('');
   };
 
@@ -49,10 +74,10 @@ export default function ChatPage() {
           flex: 1,
           boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
           borderRadius: '5px',
-          backgroundColor: appConfig.theme.colors.neutrals[700],
+          backgroundColor: 'rgba(0,0,0,0.8)',
           height: '100%',
           maxWidth: '95%',
-          maxHeight: '95vh',
+          maxHeight: '80vh',
           padding: '32px',
         }}
       >
@@ -64,6 +89,7 @@ export default function ChatPage() {
             flex: 1,
             height: '80%',
             backgroundColor: appConfig.theme.colors.neutrals[600],
+            opacity: '.9',
             flexDirection: 'column',
             listStyle: 'none',
             borderRadius: '5px',
@@ -110,6 +136,7 @@ export default function ChatPage() {
               label="/\"
               onClick={(e) => {
                 e.preventDefault();
+
                 handleNovaMensagem(mensagem);
               }}
               styleSheet={{
@@ -200,7 +227,7 @@ function MessageList({ mensagens, handleDelete }) {
                   display: 'inline-block',
                   marginRight: '8px',
                 }}
-                src={`https://github.com/rtripi.png`}
+                src={`https://github.com/${mensagem.from}.png`}
               />
               <Text tag="strong">{mensagem.from}</Text>
               <Text
@@ -221,13 +248,13 @@ function MessageList({ mensagens, handleDelete }) {
                   width: '5px',
                   heigth: '5px',
                   backgroundColor: 'transparent',
-                  left: {
-                    xs: '5%',
-                    md: '55%',
-                    sm: '5%',
-                    lg: '60%',
-                    xl: '80%',
-                  },
+                  // left: {
+                  //   xs: '5%',
+                  //   md: '55%',
+                  //   sm: '5%',
+                  //   lg: '60%',
+                  //   xl: '80%',
+                  // },
                 }}
               />
             </Box>

@@ -10,6 +10,7 @@ const GlobalStyle = () => {
       li {
         list-style: none;
       }
+
       body {
         font-family: 'Open Sans', sans-serif;
         height: 100vh;
