@@ -112,7 +112,7 @@ export default function ChatPage() {
         backgroundColor: appConfig.theme.colors.primary[500],
         backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)`,
         backgroundRepeat: 'no-repeat',
-        backgroundSize: '100%',
+        backgroundSize: 'cover',
         backgroundBlendMode: 'multiply',
         color: appConfig.theme.colors.neutrals['000'],
         minHeight: '100vh',
