@@ -83,13 +83,25 @@ export default function ChatPage() {
 
   const handleDelete = (e) => {
     const msgId = Number(e.currentTarget.dataset.id);
-    const filteredItems = chat.filter((item) => {
-      //console.log(`ITEM ID - ${item.id} /// msgID - ${msgId}`);
-      return item.id !== msgId;
-    });
+    // const filteredItems = chat.filter((item) => {
+    //   //console.log(`ITEM ID - ${item.id} /// msgID - ${msgId}`);
+    //   return item.id !== msgId;
+    // });
 
-    setChat(filteredItems);
+    supabaseClient
+      .from('mensagens')
+      .delete()
+      .eq('id', msgId)
+      .then(({ data }) => {
+        // console.log(data[0].id);
+        // console.log(chat);
+        const filteredItems = chat.filter((item) => item.id !== data[0].id);
+        setChat(filteredItems);
+        console.log(filteredItems);
+      });
+    //setChat(filteredItems);
   };
+
   // ./Sua lógica vai aqui
   return (
     <Box
