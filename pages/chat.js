@@ -12,12 +12,27 @@ const SUPABASE_URL = 'https://sxukmdopdhgbbjgtvmjm.supabase.co';
 
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function escutaMensagensEmTempoReal(adicionaMensagem) {
+  return supabaseClient
+    .from('mensagens')
+    .on('INSERT', (respostaLive) => {
+      adicionaMensagem(respostaLive.new);
+    })
+    .subscribe();
+}
+
 export default function ChatPage() {
   // Sua lógica vai aqui
   const roteamento = useRouter();
   const usuarioLogado = roteamento.query.username;
   const [mensagem, setMensagem] = useState('');
-  const [chat, setChat] = useState([]);
+  const [chat, setChat] = useState([
+    // {
+    //   id: 1,
+    //   from: 'rtripi',
+    //   message: ':reaction: https://c.tenor.com/VylWt5lyjBoAAAAC/omg-yes.gif',
+    // },
+  ]);
 
   useEffect(() => {
     supabaseClient
@@ -27,6 +42,26 @@ export default function ChatPage() {
       .then(({ data }) => {
         setChat(data);
       });
+
+    const subscription = escutaMensagensEmTempoReal((novaMensagem) => {
+      // console.log('Nova mensagem:', novaMensagem);
+      // console.log('listaDeMensagens:', listaDeMensagens);
+      // Quero reusar um valor de referencia (objeto/array)
+      // Passar uma função pro setState
+
+      // setListaDeMensagens([
+      //     novaMensagem,
+      //     ...listaDeMensagens
+      // ])
+      setChat((valorAtualDaLista) => {
+        // console.log('valorAtualDaLista:', valorAtualDaLista);
+        return [novaMensagem, ...valorAtualDaLista];
+      });
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleNovaMensagem = (novaMensagem) => {
@@ -40,7 +75,7 @@ export default function ChatPage() {
       .from('mensagens')
       .insert([mensagem])
       .then(({ data }) => {
-        setChat([data[0], ...chat]);
+        // setChat([data[0], ...chat]);
       });
 
     setMensagem('');
@@ -65,7 +100,7 @@ export default function ChatPage() {
         backgroundColor: appConfig.theme.colors.primary[500],
         backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)`,
         backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
+        backgroundSize: '100%',
         backgroundBlendMode: 'multiply',
         color: appConfig.theme.colors.neutrals['000'],
         minHeight: '100vh',
@@ -79,7 +114,7 @@ export default function ChatPage() {
           boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
           borderRadius: '5px',
           backgroundColor: 'rgba(0,0,0,0.8)',
-          height: '100%',
+          alignSelf: 'center',
           maxWidth: '95%',
           maxHeight: '80vh',
           padding: '32px',
@@ -98,6 +133,7 @@ export default function ChatPage() {
             listStyle: 'none',
             borderRadius: '5px',
             padding: '16px',
+            maxHeight: '50vh',
           }}
         >
           <MessageList mensagens={chat} handleDelete={handleDelete} />
@@ -157,7 +193,11 @@ export default function ChatPage() {
                 color: '#FFFFFF50',
               }}
             />
-            <ButtonSendSticker />
+            <ButtonSendSticker
+              onStickerClick={(sticker) => {
+                handleNovaMensagem(':reaction: ' + sticker);
+              }}
+            />
           </Box>
         </Box>
       </Box>
@@ -253,17 +293,22 @@ function MessageList({ mensagens, handleDelete }) {
                   width: '5px',
                   heigth: '5px',
                   backgroundColor: 'transparent',
-                  // left: {
-                  //   xs: '5%',
-                  //   md: '55%',
-                  //   sm: '5%',
-                  //   lg: '60%',
-                  //   xl: '80%',
-                  // },
+                  hover: {
+                    backgroundColor: appConfig.theme.colors.neutrals[600],
+                  },
                 }}
               />
             </Box>
-            {mensagem.message}
+            {mensagem.message.startsWith(':reaction:') ? (
+              <Image
+                styleSheet={{ width: '75px' }}
+                src={mensagem.message.replace(':reaction:', '')}
+              />
+            ) : (
+              mensagem.message
+            )}
+
+            {/* {mensagem.message} */}
           </Text>
         );
       })}
